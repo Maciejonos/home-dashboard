@@ -1,0 +1,1 @@
+sftp -b upload.sftp $1

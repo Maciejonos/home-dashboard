@@ -41,8 +41,7 @@ const theme = createTheme({
 });
 
 export const App: React.FC = () => {
-  // const {data,error} = useApi<NodeInfo>("/status");
-  const { data, error } = useApi<NodeInfo>("http://media.local:8080/status");
+  const { data, error } = useApi<NodeInfo>("/status");
 
   if (error) {
     return <div>Error: {error.message}</div>;

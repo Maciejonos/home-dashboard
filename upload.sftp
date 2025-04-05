@@ -1,0 +1,6 @@
+cd /opt/dashboard
+put server.py server.py
+cd /var/www/lab-dashboard
+lcd build
+put -r *
+bye
