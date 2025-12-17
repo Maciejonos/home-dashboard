@@ -23,3 +23,41 @@ server {
     }
 }
 ```
+
+To upload via sftp you can run the following command:
+
+```sh
+$ sftp -b upload.sftp *hostname*
+```
+
+To mount it as service put this file in `/etc/systemd/system/dashboard.service`
+
+```
+[Unit]
+Description=Node health status service
+After=network.target
+
+[Service]
+ExecStart=/opt/dashboard/venv/bin/python /opt/dashboard/server.py
+WorkingDirectory=/opt/dashboard
+Restart=always
+User=status
+Environment=PORT=18745
+
+[Install]
+WantedBy=multi-user.target
+```
+
+This config assumes virtualenv is created:
+
+```sh
+$ cd /opt/dashboard
+$ python -m venv venv
+```
+
+User running `server.py` needs to be added to following groups
+
+```sh
+$ sudo usermod -aG video *user*
+$ sudo usermod -aG docker *user*
+```
