@@ -26,16 +26,16 @@ const App: React.FC = () => {
       </div>
 
       <div
-        className={clsx("mx-auto flex gap-4 flex-wrap", {
-          "max-w-4xl": !wide,
+        className={clsx("mx-auto flex gap-4 flex-wrap flex-col md:flex-row", {
+          "max-w-6xl": !wide,
         })}
       >
         <nav className="flex-grow w-full">
           <Card>
-            <CardContent>Search?</CardContent>
+            <CardContent>Global Search?</CardContent>
           </Card>
         </nav>
-        <aside className="w-64">
+        <aside className="md:w-64">
           <Card>
             <CardContent>
               <Calendar
@@ -52,7 +52,7 @@ const App: React.FC = () => {
           </Card>
           <DockerContainerList />
         </main>
-        <aside className="w-64">
+        <aside className="md:w-64">
           <Hardware hostname="media.local:18745" />
           <Hardware hostname="node1.local:18745" />
         </aside>
