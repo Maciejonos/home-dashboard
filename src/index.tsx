@@ -11,6 +11,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { ThemeSwitcher } from "./themeSwitcher";
 import { Button } from "@/components/ui/button";
 import { AlignHorizontalSpaceAroundIcon } from "lucide-react";
+import { Services } from "./section/services";
 
 const App: React.FC = () => {
   const [wide, setWide] = useState(true);
@@ -50,6 +51,7 @@ const App: React.FC = () => {
           <Card className="mb-4">
             <CardContent>main</CardContent>
           </Card>
+          <Services />
           <DockerContainerList />
         </main>
         <aside className="md:w-64">
