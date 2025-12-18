@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Loader, Plus, Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { PutService, usePutService } from "../api/service";
+import { PutService, useDeleteService, usePutService } from "../api/service";
 
 function Service({
   name,
@@ -23,18 +23,31 @@ function Service({
   url,
   host,
 }: ServiceStatus & { host: string }) {
+  const { mutate: deleteService, isPending } = useDeleteService();
+
   return (
     <Card className="min-w-70 flex-1">
-      <div className="px-4">
+      <div className="px-4 flex items-center justify-between">
         <span className="overflow-hidden text-ellipsis inline-block w-[60%]">
           {name}
         </span>
-        <Badge
-          variant={status === "active" ? "default" : "destructive"}
-          className="ml-2 float-right"
-        >
-          {status}
-        </Badge>
+        <div className="flex items-center relative left-3">
+          <Badge
+            variant={status === "active" ? "default" : "destructive"}
+            className="ml-2"
+          >
+            {status}
+          </Badge>
+          <Button
+            variant="ghost"
+            className="text-destructive"
+            onClick={() =>
+              deleteService({ hostname: `media.local:18745`, svName: sv_name })
+            }
+          >
+            {isPending ? <Loader className="animate-spin" /> : <Trash2 />}
+          </Button>
+        </div>
       </div>
       <CardContent>
         <div className="text-xs text-gray-500">

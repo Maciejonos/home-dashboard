@@ -27,3 +27,26 @@ export function usePutService(onSuccess?: () => void) {
     },
   });
 }
+
+export function useDeleteService(onSuccess?: () => void) {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: (variables: { hostname: string; svName: string }) =>
+      fetch(
+        `http://${variables.hostname}/api/service/${encodeURIComponent(variables.svName)}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      ),
+    onSuccess: (_data, variables) => {
+      client.invalidateQueries({
+        queryKey: createStatusOptions(variables.hostname).queryKey,
+      });
+      onSuccess?.();
+    },
+  });
+}

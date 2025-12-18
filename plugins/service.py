@@ -43,7 +43,7 @@ class ServicePlugin:
         with TinyDB("db.json") as db:
             services_table = db.table("services")
             service_id = services_table.get(where("sv_name") == sv_name).doc_id
-            services_table.remove(service_id)
+            services_table.remove(doc_ids=[service_id])
             return "", 204
 
     def get_payload(self):
