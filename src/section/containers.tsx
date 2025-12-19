@@ -35,7 +35,7 @@ function DockerContainer({
 
 export function DockerContainerList() {
   const [search, setSearch] = React.useState("");
-  const media = useStatus("media.local:18745");
+  const media = useStatus("localhost:18745");
   const node1 = useStatus("node1.local:18745");
 
   return (

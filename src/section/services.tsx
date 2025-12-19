@@ -41,9 +41,7 @@ function Service({
           <Button
             variant="ghost"
             className="text-destructive"
-            onClick={() =>
-              deleteService({ hostname: `media.local:18745`, svName: sv_name })
-            }
+            onClick={() => deleteService({ hostname: host, svName: sv_name })}
           >
             {isPending ? <Loader className="animate-spin" /> : <Trash2 />}
           </Button>
@@ -52,7 +50,7 @@ function Service({
       <CardContent>
         <div className="text-xs text-gray-500">
           {sv_name}
-          <span className="text-xs text-gray-400">@{host}</span>
+          <span className="text-xs text-gray-400">@{host.split(":")[0]}</span>
         </div>
         {!!url && (
           <a
@@ -71,22 +69,27 @@ function Service({
 
 function AddService() {
   const [open, setOpen] = React.useState(false);
-  const [form, setForm] = React.useState<PutService>({
+  const [form, setForm] = React.useState<
+    PutService & {
+      hostname: string;
+    }
+  >({
     name: "",
     url: "",
     sv_name: "",
+    hostname: "",
   });
   const { mutate } = usePutService(() => {
     setOpen(false);
   });
 
   useEffect(() => {
-    setForm({ name: "", url: "", sv_name: "" });
+    setForm({ name: "", url: "", sv_name: "", hostname: "localhost:18745" });
   }, [open]);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    mutate({ hostname: "media.local:18745", data: form });
+    mutate({ hostname: form.hostname, data: form });
   };
 
   return (
@@ -120,6 +123,13 @@ function AddService() {
               onChange={(e) => setForm({ ...form, sv_name: e.target.value })}
               placeholder="Linux Service Name"
               required
+              className="mb-4"
+            />
+            <Input
+              value={form.hostname}
+              onChange={(e) => setForm({ ...form, hostname: e.target.value })}
+              placeholder="Host"
+              required
             />
           </DialogDescription>
           <DialogFooter>
@@ -135,7 +145,7 @@ function AddService() {
 
 export function Services() {
   const [search, setSearch] = React.useState("");
-  const media = useStatus("media.local:18745");
+  const media = useStatus("localhost:18745");
   const node1 = useStatus("node1.local:18745");
 
   return (
@@ -152,11 +162,11 @@ export function Services() {
         {[
           media.data?.services.map((sv) => ({
             ...sv,
-            host: media.data.network.hostname,
+            host: "localhost:18745",
           })) ?? [],
           node1.data?.services.map((sv) => ({
             ...sv,
-            host: node1.data.network.hostname,
+            host: "node1.local:18745",
           })) ?? [],
         ]
           .flat()

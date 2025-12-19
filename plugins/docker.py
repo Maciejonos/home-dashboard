@@ -12,21 +12,24 @@ class DockerPlugin:
             self.engine = "nerdctl"
 
     def get_containers(self):
-        result = subprocess.run(
-            [self.engine, "ps", "-a", "--format", "json"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        ).stdout.splitlines()
-        containers = [json.loads(line) for line in result]
+        try:
+            result = subprocess.run(
+                [self.engine, "ps", "-a", "--format", "json"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            ).stdout.splitlines()
+            containers = [json.loads(line) for line in result]
 
-        return [
-            {
-                "running": container.get("Status") == "Up"
-                or container.get("State") == "running",
-                "image": container.get("Image"),
-                "id": container.get("ID"),
-                "name": container.get("Names"),
-            }
-            for container in containers
-        ]
+            return [
+                {
+                    "running": container.get("Status") == "Up"
+                    or container.get("State") == "running",
+                    "image": container.get("Image"),
+                    "id": container.get("ID"),
+                    "name": container.get("Names"),
+                }
+                for container in containers
+            ]
+        except:
+            return []

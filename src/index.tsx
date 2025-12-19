@@ -12,10 +12,11 @@ import { ThemeSwitcher } from "./themeSwitcher";
 import { Button } from "@/components/ui/button";
 import { AlignHorizontalSpaceAroundIcon } from "lucide-react";
 import { Services } from "./section/services";
+import { TodoSection } from "./section/todo";
 
 const App: React.FC = () => {
   const [wide, setWide] = useState(true);
-  useStatus("media.local:18745");
+  useStatus("localhost:18745");
 
   return (
     <div className="p-4">
@@ -37,7 +38,7 @@ const App: React.FC = () => {
           </Card>
         </nav>
         <aside className="md:w-64">
-          <Card>
+          <Card className="mb-4">
             <CardContent>
               <Calendar
                 className="mx-auto"
@@ -46,6 +47,7 @@ const App: React.FC = () => {
               />
             </CardContent>
           </Card>
+          <TodoSection />
         </aside>
         <main className="flex-1 @container">
           <Card className="mb-4">
@@ -55,7 +57,7 @@ const App: React.FC = () => {
           <DockerContainerList />
         </main>
         <aside className="md:w-64">
-          <Hardware hostname="media.local:18745" />
+          <Hardware hostname="localhost:18745" />
           <Hardware hostname="node1.local:18745" />
         </aside>
       </div>

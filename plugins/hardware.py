@@ -10,14 +10,17 @@ def get_uptime():
 
 
 def get_temperature():
-    result = subprocess.run(
-        ["vcgencmd", "measure_temp"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-    )
+    try:
+        result = subprocess.run(
+            ["vcgencmd", "measure_temp"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
 
-    return result.stdout.strip().split("=")[1].split("'")[0]
+        return result.stdout.strip().split("=")[1].split("'")[0]
+    except:
+        return "N/A"
 
 
 def read_all_cpu_stats():
@@ -56,20 +59,26 @@ def calculate_idle_percent(before, after):
 
 
 def get_cpu_idle_percentages(interval=1.0):
-    before = read_all_cpu_stats()
-    time.sleep(interval)
-    after = read_all_cpu_stats()
+    try:
+        before = read_all_cpu_stats()
+        time.sleep(interval)
+        after = read_all_cpu_stats()
 
-    return calculate_idle_percent(before, after)
+        return calculate_idle_percent(before, after)
+    except:
+        return {}
 
 
 def get_used_and_total_ram():
-    result = subprocess.run(
-        ["free", "-h"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-    )
-    for line in result.stdout.splitlines():
-        if "Mem:" in line:
-            return line.split()[1:4]
+    try:
+        result = subprocess.run(
+            ["free", "-h"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+        )
+        for line in result.stdout.splitlines():
+            if "Mem:" in line:
+                return line.split()[1:4]
+    except:
+        return ["N/A", "N/A", "N/A"]
 
 
 def get_used_and_total_disk():

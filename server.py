@@ -6,6 +6,7 @@ from plugins.hardware import hardware_info
 from plugins.network import network_info
 from plugins.service import ServicePlugin
 from plugins.docker import DockerPlugin
+from plugins.todo import TodoListPlugin
 
 Response.default_content_type = "application/json"
 app = Microdot()
@@ -57,6 +58,7 @@ cors.allowed_origins = "*"
 
 services = ServicePlugin(app)
 docker = DockerPlugin(app)
+todo_list = TodoListPlugin(app)
 
 
 @app.route("/api/status")

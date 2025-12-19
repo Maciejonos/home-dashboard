@@ -19,16 +19,21 @@ def check_external_ip():
 
 # Get local IP addresses
 def check_local_ip():
-    result = subprocess.run(
-        ["ip", "-f", "inet", "addr", "show", "eth0"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-    ).stdout.strip()
-    ips = [
-        line.split()[1].split("/")[0] for line in result.splitlines() if "inet " in line
-    ]
-    return ips
+    try:
+        result = subprocess.run(
+            ["ip", "-f", "inet", "addr", "show", "eth0"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        ).stdout.strip()
+        ips = [
+            line.split()[1].split("/")[0]
+            for line in result.splitlines()
+            if "inet " in line
+        ]
+        return ips
+    except:
+        return ["Unknown"]
 
 
 def network_info():

@@ -39,7 +39,7 @@ export function Hardware({ hostname }: HardwareProps) {
             </div>
 
             <div className="mb-1">
-              CPU ({data.hardware.cpu_idle_percentages.all.toFixed(1)}%)
+              CPU ({data.hardware.cpu_idle_percentages.all?.toFixed(1)}%)
             </div>
             <div className="grid gap-1 mb-4">
               <Bar value={data.hardware.cpu_idle_percentages.core0} />
