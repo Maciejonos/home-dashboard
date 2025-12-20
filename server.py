@@ -7,6 +7,7 @@ from plugins.network import network_info
 from plugins.service import ServicePlugin
 from plugins.docker import DockerPlugin
 from plugins.todo import TodoListPlugin
+from plugins.weather import WeatherPlugin
 
 Response.default_content_type = "application/json"
 app = Microdot()
@@ -59,6 +60,7 @@ cors.allowed_origins = "*"
 services = ServicePlugin(app)
 docker = DockerPlugin(app)
 todo_list = TodoListPlugin(app)
+weather = WeatherPlugin(app)
 
 
 @app.route("/api/status")

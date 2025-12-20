@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Card, CardContent } from "@/components/ui/card";
 import "./styles/globals.css";
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { AlignHorizontalSpaceAroundIcon } from "lucide-react";
 import { Services } from "./section/services";
 import { TodoSection } from "./section/todo";
+import { Weather } from "./section/weather";
 
 const App: React.FC = () => {
   const [wide, setWide] = useState(true);
@@ -48,6 +49,7 @@ const App: React.FC = () => {
             </CardContent>
           </Card>
           <TodoSection />
+          <Weather />
         </aside>
         <main className="flex-1 @container">
           <Card className="mb-4">
@@ -65,13 +67,15 @@ const App: React.FC = () => {
   );
 };
 
-const queryClient = new QueryClient();
+const Root = () => {
+  const queryClient = useMemo(() => new QueryClient(), []);
 
-const Root = () => (
-  <QueryClientProvider client={queryClient}>
-    <App />
-  </QueryClientProvider>
-);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  );
+};
 
 const container = document.getElementById("root")!;
 const root = createRoot(container);

@@ -96,7 +96,7 @@ function AddService() {
     <Dialog open={open} onOpenChange={setOpen}>
       <form onSubmit={submit}>
         <DialogTrigger asChild>
-          <Button variant="outline">
+          <Button variant="outline" size="icon">
             <Plus />
           </Button>
         </DialogTrigger>

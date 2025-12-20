@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=development webpack serve",
-    "build": "rm -rf dist && NODE_ENV=production webpack",
+    "build": "rm -rf build && NODE_ENV=production webpack",
     "pack": "cd dist && zip -r bundle.zip *",
     "deploy": "npm run build && npm run pack && node deploy.mjs"
   },

@@ -27,7 +27,7 @@ export function TodoSection() {
   };
 
   return (
-    <Card>
+    <Card className="mb-4">
       <CardHeader>
         <CardTitle>To Do</CardTitle>
       </CardHeader>

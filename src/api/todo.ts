@@ -7,7 +7,6 @@ export function createTodosOptions(hostname: string) {
       fetch(`http://${hostname}/api/todos`).then(
         (res) => res.json() as Promise<{ id: number; content: string }[]>
       ),
-    refetchInterval: 5000,
   };
 }
 
