@@ -1,11 +1,31 @@
 from microdot import Microdot, Request
 from pydantic import BaseModel, HttpUrl, Field
 from tinydb import TinyDB, where
+import requests
+from html.parser import HTMLParser
+
+
+# Parse HTML to find an icon
+class DocumentParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.icon = None
+
+    def handle_starttag(self, tag, attrs):
+        if self.icon:
+            return
+
+        if tag == "link":
+            for attr in attrs:
+                if attr[0] == "rel" and "icon" in attr[1]:
+                    self.icon = dict(attrs).get("href")
+                    break
 
 
 class Link(BaseModel):
     url: HttpUrl
     name: str = Field(..., min_length=1)
+    icon: str | None = Field(default=None)
 
 
 class LinkPlugin:
@@ -20,7 +40,12 @@ class LinkPlugin:
             links = db.table("links").all()
 
             return [
-                {"id": link.doc_id, "name": link["name"], "url": link["url"]}
+                {
+                    "id": link.doc_id,
+                    "name": link["name"],
+                    "url": link["url"],
+                    "icon": link.get("icon"),
+                }
                 for link in links
             ]
 
@@ -29,6 +54,22 @@ class LinkPlugin:
             links_table = db.table("links")
             data = request.json
             link = Link(**data)
+
+            if not link.icon:
+                response = requests.get(link.url)
+                if response.status_code == 200:
+                    parser = DocumentParser()
+                    parser.feed(response.text)
+                    if parser.icon:
+                        if parser.icon.startswith("http") or parser.icon.startswith(
+                            "data:"
+                        ):
+                            link.icon = parser.icon
+                        else:
+                            link.icon = requests.compat.urljoin(
+                                link.url.__str__(), parser.icon
+                            )
+
             links_table.insert(
                 link.model_dump(mode="json"),
             )

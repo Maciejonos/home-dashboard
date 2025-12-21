@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -30,7 +31,11 @@ import urlJoin from "url-join";
 
 function AddLink() {
   const [open, setOpen] = React.useState(false);
-  const [form, setForm] = React.useState<PutLink>({ name: "", url: "" });
+  const [form, setForm] = React.useState<PutLink>({
+    name: "",
+    url: "",
+    icon: "",
+  });
   const { mutate: addLink } = usePutLink(() => {
     setOpen(false);
   });
@@ -40,7 +45,10 @@ function AddLink() {
   ) => {
     e.preventDefault();
     e.stopPropagation();
-    addLink(form);
+    addLink({
+      ...form,
+      icon: form.icon === "" ? undefined : form.icon,
+    });
   };
 
   const updateForm = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +60,7 @@ function AddLink() {
   };
 
   React.useEffect(() => {
-    setForm({ name: "", url: "" });
+    setForm({ name: "", url: "", icon: "" });
   }, [open]);
 
   return (
@@ -71,20 +79,31 @@ function AddLink() {
           <DialogHeader>
             <DialogTitle>Add Link</DialogTitle>
           </DialogHeader>
-          <Input
-            type="text"
-            placeholder="Link label..."
-            value={form.name}
-            onChange={updateForm}
-            name="name"
-          />
-          <Input
-            type="text"
-            placeholder="Link URL..."
-            value={form.url}
-            onChange={updateForm}
-            name="url"
-          />
+          <DialogDescription>
+            <Input
+              className="mb-4"
+              type="text"
+              placeholder="Link label..."
+              value={form.name}
+              onChange={updateForm}
+              name="name"
+            />
+            <Input
+              className="mb-4"
+              type="text"
+              placeholder="Link URL..."
+              value={form.url}
+              onChange={updateForm}
+              name="url"
+            />
+            <Input
+              type="text"
+              placeholder="Icon URL..."
+              value={form.icon}
+              onChange={updateForm}
+              name="icon"
+            />
+          </DialogDescription>
           <DialogFooter>
             <Button onClick={submit}>Add</Button>
           </DialogFooter>
@@ -94,7 +113,7 @@ function AddLink() {
   );
 }
 
-function Link({ id, name, url }: Link) {
+function Link({ id, name, url, icon }: Link) {
   const { mutate } = useDeleteLink();
   const remove: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();
@@ -112,7 +131,7 @@ function Link({ id, name, url }: Link) {
       >
         <ItemMedia>
           <img
-            src={urlJoin(url, "favicon.ico")}
+            src={icon ? icon : urlJoin(url, "favicon.ico")}
             alt="Favicon"
             className="h-4 w-4"
           />

@@ -2,6 +2,7 @@ from microdot import Microdot, Response, Request, send_file
 from microdot.cors import CORS
 import os
 from dotenv import load_dotenv
+from pydantic import ValidationError
 
 from plugins.hardware import hardware_info
 from plugins.network import network_info
@@ -20,6 +21,11 @@ app = Microdot()
 if debug:
     cors = CORS(allowed_origins="*")
     cors.initialize(app=app)
+
+
+@app.errorhandler(ValidationError)
+def handle_validation_error(request: Request, exc: ValidationError):
+    return {"error": "Invalid input", "details": exc.errors()}, 400
 
 
 # services = {

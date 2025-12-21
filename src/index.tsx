@@ -24,7 +24,7 @@ const App: React.FC = () => {
   return (
     <div className="p-4">
       <div className="flex gap-4 mb-4">
-        <Button onClick={() => setWide(!wide)} variant="outline" size="sm">
+        <Button onClick={() => setWide(!wide)} variant="outline" size="icon">
           <AlignHorizontalSpaceAroundIcon />
         </Button>
         <ThemeSwitcher />

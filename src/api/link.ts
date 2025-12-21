@@ -5,6 +5,7 @@ export type Link = {
   name: string;
   url: string;
   id: number;
+  icon?: string;
 };
 
 export type PutLink = Omit<Link, "id">;
