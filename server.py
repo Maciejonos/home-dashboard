@@ -9,13 +9,17 @@ from plugins.service import ServicePlugin
 from plugins.docker import DockerPlugin
 from plugins.todo import TodoListPlugin
 from plugins.weather import WeatherPlugin
+from plugins.links import LinkPlugin
 
 load_dotenv()
 
+debug = os.getenv("DEBUG", "False").lower() == "true"
+
 Response.default_content_type = "application/json"
 app = Microdot()
-cors = CORS(allow_credentials=True, allowed_origins=["*"])
-cors.initialize(app=app)
+if debug:
+    cors = CORS(allowed_origins="*")
+    cors.initialize(app=app)
 
 
 # services = {
@@ -63,6 +67,7 @@ services = ServicePlugin(app)
 docker = DockerPlugin(app)
 todo_list = TodoListPlugin(app)
 weather = WeatherPlugin(app)
+links = LinkPlugin(app)
 
 
 @app.get("/api/status")
@@ -88,6 +93,6 @@ def public_files(request: Request, path: str):
 
 
 app.run(
-    debug=os.environ.get("DEBUG", False),
+    debug=debug,
     port=int(os.environ.get("PORT", 18745)),
 )

@@ -41,7 +41,11 @@ function AddCity() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="icon" variant="outline">
+        <Button
+          size="icon"
+          variant="outline"
+          className="relative bottom-2 left-2"
+        >
           <Plus />
         </Button>
       </DialogTrigger>
@@ -125,7 +129,7 @@ export function Weather() {
 
   return (
     <Card>
-      <CardHeader className="flex items-center justify-between">
+      <CardHeader className="flex justify-between">
         <CardTitle>Weather</CardTitle>
         <AddCity />
       </CardHeader>

@@ -10,11 +10,12 @@ import { DockerContainerList } from "./section/containers";
 import { Calendar } from "@/components/ui/calendar";
 import { ThemeSwitcher } from "./themeSwitcher";
 import { Button } from "@/components/ui/button";
-import { AlignHorizontalSpaceAroundIcon } from "lucide-react";
+import { AlignHorizontalSpaceAroundIcon, Link } from "lucide-react";
 import { Services } from "./section/services";
 import { TodoSection } from "./section/todo";
 import { Weather } from "./section/weather";
 import { API_HOST } from "./api/config.";
+import { Links } from "./section/links";
 
 const App: React.FC = () => {
   const [wide, setWide] = useState(true);
@@ -56,6 +57,7 @@ const App: React.FC = () => {
           <Card className="mb-4">
             <CardContent>main</CardContent>
           </Card>
+          <Links />
           <Services />
           <DockerContainerList />
         </main>
