@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { API_HOST } from "../api/config.";
+import { CheckCircle2, XCircle } from "lucide-react";
 
 function DockerContainer({
   name,
@@ -13,24 +14,28 @@ function DockerContainer({
   host,
 }: DockerContainerStatus & { host: string }) {
   return (
-    <Card className="min-w-70 flex-1">
-      <div className="px-4">
-        <span className="overflow-hidden text-ellipsis inline-block w-[60%]">
-          {name}
-        </span>
-        <Badge
-          variant={running ? "default" : "destructive"}
-          className="ml-2 float-right"
-        >
-          {running ? "Running" : "Stopped"}
-        </Badge>
+    <>
+      <span className="overflow-hidden text-ellipsis">{name}</span>
+      <Badge
+        variant={running ? "default" : "destructive"}
+        className="ml-2 float-right"
+      >
+        {running ? (
+          <>
+            <CheckCircle2 /> OK
+          </>
+        ) : (
+          <>
+            <XCircle /> Problem
+          </>
+        )}
+      </Badge>
+      <div className="text-xs overflow-hidden text-ellipsis text-nowrap">
+        {image}
       </div>
-      <CardContent>
-        <div className="text-xs text-gray-500">{image}</div>
-        <div className="text-xs text-gray-400">{host}</div>
-        <div className="text-xs text-gray-300">{id}</div>
-      </CardContent>
-    </Card>
+      <div className="text-xs">{host}</div>
+      <div className="text-xs text-right">{id}</div>
+    </>
   );
 }
 
@@ -40,14 +45,19 @@ export function DockerContainerList() {
   const node1 = useStatus("node1.local:18745");
 
   return (
-    <div>
-      <Input
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search containers..."
-        className="w-full mb-4"
-      />
-      <div className="flex gap-4 flex-wrap">
+    <Card className="mb-4">
+      <CardHeader>
+        <CardTitle>Containers</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search containers..."
+          className="w-full"
+        />
+      </CardContent>
+      <CardContent className="grid gap-4 grid-cols-[200px_70px_3fr_1fr_1fr]">
         {[
           media.data?.docker.map((container) => ({
             ...container,
@@ -69,7 +79,7 @@ export function DockerContainerList() {
           .map((container) => (
             <DockerContainer key={container.id} {...container} />
           ))}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
