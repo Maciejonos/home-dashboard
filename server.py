@@ -95,6 +95,8 @@ def index(request: Request):
 
 @app.get("/<path:path>")
 def public_files(request: Request, path: str):
+    if ".." in path:
+        return "Not found", 404
     return send_file(path)
 
 
