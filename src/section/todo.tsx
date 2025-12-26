@@ -27,6 +27,12 @@ export function TodoSection() {
     return false;
   };
 
+  const onKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      submit(e as unknown as React.FormEvent<HTMLFormElement>);
+    }
+  };
+
   return (
     <Card className="mb-4">
       <CardHeader>
@@ -52,7 +58,7 @@ export function TodoSection() {
         ) : (
           <div className="py-2 text-gray-300">Empty, add new todo?</div>
         )}
-        <form onSubmit={submit}>
+        <form onSubmit={submit} onKeyDown={onKeyDown}>
           <InputGroup>
             <InputGroupTextarea
               value={content}

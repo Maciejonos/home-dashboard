@@ -79,7 +79,7 @@ export function Hardware({ hostname }: HardwareProps) {
                 <span className="ml-2">external</span>
               </div>
               {data.network.local_ip.map((ip) => (
-                <div>
+                <div key={ip}>
                   <span>{ip}</span>
                   <span className="ml-2">local</span>
                 </div>

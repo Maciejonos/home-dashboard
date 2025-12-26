@@ -10,7 +10,7 @@ import { DockerContainerList } from "./section/containers";
 import { Calendar } from "@/components/ui/calendar";
 import { ThemeSwitcher } from "./themeSwitcher";
 import { Button } from "@/components/ui/button";
-import { AlignHorizontalSpaceAroundIcon, Link } from "lucide-react";
+import { AlignHorizontalSpaceAroundIcon } from "lucide-react";
 import { Services } from "./section/services";
 import { TodoSection } from "./section/todo";
 import { Weather } from "./section/weather";
@@ -36,9 +36,9 @@ const App: React.FC = () => {
         })}
       >
         <nav className="flex-grow w-full">
-          <Card>
+          {/* <Card>
             <CardContent>Global Search?</CardContent>
-          </Card>
+          </Card> */}
         </nav>
         <aside className="md:w-64">
           <Card className="mb-4">
@@ -54,9 +54,9 @@ const App: React.FC = () => {
           <Weather />
         </aside>
         <main className="flex-1 @container">
-          <Card className="mb-4">
+          {/* <Card className="mb-4">
             <CardContent>main</CardContent>
-          </Card>
+          </Card> */}
           <Links />
           <Services />
           <DockerContainerList />

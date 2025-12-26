@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { ServiceStatus, useStatus } from "../api/status";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Loader, Plus, Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -27,44 +27,36 @@ function Service({
   const { mutate: deleteService, isPending } = useDeleteService();
 
   return (
-    <Card className="min-w-70 flex-1">
-      <div className="px-4 flex items-center justify-between">
-        <span className="overflow-hidden text-ellipsis inline-block w-[60%]">
-          {name}
-        </span>
-        <div className="flex items-center relative left-3">
-          <Badge
-            variant={status === "active" ? "default" : "destructive"}
-            className="ml-2"
-          >
-            {status}
-          </Badge>
-          <Button
-            variant="ghost"
-            className="text-destructive"
-            onClick={() => deleteService({ hostname: host, svName: sv_name })}
-          >
-            {isPending ? <Loader className="animate-spin" /> : <Trash2 />}
-          </Button>
-        </div>
-      </div>
-      <CardContent>
-        <div className="text-xs text-gray-500">
-          {sv_name}
-          <span className="text-xs text-gray-400">@{host.split(":")[0]}</span>
-        </div>
-        {!!url && (
-          <a
-            className="text-xs text-blue-500 hover:underline break-all mt-2"
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {url}
-          </a>
-        )}
-      </CardContent>
-    </Card>
+    <>
+      <span className="overflow-hidden text-ellipsis text-nowrap">{name}</span>
+      <Badge
+        variant={status === "active" ? "default" : "destructive"}
+        className="ml-2"
+      >
+        {status}
+      </Badge>
+      <span>{sv_name}</span>
+      <span>{host.split(":")[0]}</span>
+      {url ? (
+        <a
+          className="text-blue-500 hover:underline overflow-hidden text-ellipsis text-nowrap block"
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {url}
+        </a>
+      ) : (
+        <div />
+      )}
+      <Button
+        variant="ghost"
+        className="text-destructive"
+        onClick={() => deleteService({ hostname: host, svName: sv_name })}
+      >
+        {isPending ? <Loader className="animate-spin" /> : <Trash2 />}
+      </Button>
+    </>
   );
 }
 
@@ -145,45 +137,61 @@ function AddService() {
 }
 
 export function Services() {
+  const [open, setOpen] = React.useState(true);
   const [search, setSearch] = React.useState("");
   const media = useStatus(API_HOST);
   const node1 = useStatus("node1.local:18745");
 
   return (
-    <div>
-      <div className="flex gap-4 mb-4 items-center">
-        <Input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search services..."
-        />
-        <AddService />
-      </div>
-      <div className="flex gap-4 flex-wrap mb-4">
-        {[
-          media.data?.services.map((sv) => ({
-            ...sv,
-            host: API_HOST,
-          })) ?? [],
-          node1.data?.services.map((sv) => ({
-            ...sv,
-            host: "node1.local:18745",
-          })) ?? [],
-        ]
-          .flat()
-          .sort(
-            (a, b) =>
-              Number(b.status === "active") - Number(a.status === "active")
-          )
-          .filter(
-            (service) =>
-              service.name.toLowerCase().includes(search.toLowerCase()) ||
-              service.sv_name.toLowerCase().includes(search.toLowerCase())
-          )
-          .map((service) => (
-            <Service key={service.sv_name} {...service} />
-          ))}
-      </div>
-    </div>
+    <Card className="mb-4">
+      <CardHeader className="flex justify-between">
+        <CardTitle>Services</CardTitle>
+        <Button
+          size="icon"
+          variant="outline"
+          onClick={() => setOpen(!open)}
+          className="relative left-2 bottom-2"
+        >
+          {open ? <ChevronUp /> : <ChevronDown />}
+        </Button>
+      </CardHeader>
+      {open && (
+        <>
+          <CardContent>
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search services..."
+              className="w-full"
+            />
+          </CardContent>
+          <CardContent className="grid gap-2 grid-cols-[200px_70px_1fr_1fr_1fr_28px]">
+            {[
+              media.data?.services.map((sv) => ({
+                ...sv,
+                host: API_HOST,
+              })) ?? [],
+              node1.data?.services.map((sv) => ({
+                ...sv,
+                host: "node1.local:18745",
+              })) ?? [],
+            ]
+              .flat()
+              .sort(
+                (a, b) =>
+                  Number(b.status === "active") - Number(a.status === "active")
+              )
+              .filter(
+                (service) =>
+                  service.name.toLowerCase().includes(search.toLowerCase()) ||
+                  service.sv_name.toLowerCase().includes(search.toLowerCase())
+              )
+              .map((service) => (
+                <Service key={service.sv_name} {...service} />
+              ))}
+          </CardContent>
+        </>
+      )}
+    </Card>
   );
 }
