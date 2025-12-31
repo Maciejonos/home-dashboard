@@ -30,6 +30,7 @@ function Service({
   url,
   host,
 }: ServiceStatus & { host: string }) {
+  const { data } = useStatus(host);
   const { mutate: deleteService, isPending } = useDeleteService();
 
   return (
@@ -42,7 +43,7 @@ function Service({
         {status}
       </Badge>
       <span>{sv_name}</span>
-      <span>{host.split(":")[0]}</span>
+      <span>{data?.network.hostname}</span>
       {url ? (
         <a
           className="text-blue-500 hover:underline overflow-hidden text-ellipsis text-nowrap block"
@@ -163,15 +164,18 @@ export function Services() {
       </CardHeader>
       {open && (
         <>
-          <CardContent>
+          <CardContent className="flex gap-4">
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search services..."
               className="w-full"
             />
+            <Button variant="outline" size="icon">
+              <AddService />
+            </Button>
           </CardContent>
-          <CardContent className="grid gap-2 grid-cols-[200px_70px_1fr_1fr_1fr_28px]">
+          <CardContent className="grid gap-2 grid-cols-[200px_70px_2fr_1fr_3fr_28px] items-center">
             {services
               .flatMap(({ data }, idx) =>
                 (data?.services ?? []).map((service) => ({
@@ -183,10 +187,10 @@ export function Services() {
                 (a, b) =>
                   Number(b.status === "active") - Number(a.status === "active")
               )
-              .filter(
-                (service) =>
-                  service.name.toLowerCase().includes(search.toLowerCase()) ||
-                  service.sv_name.toLowerCase().includes(search.toLowerCase())
+              .filter((service) =>
+                [service.name.toLowerCase(), service.sv_name.toLowerCase()]
+                  .join("\0\0")
+                  .includes(search.toLowerCase())
               )
               .map((service) => (
                 <Service key={service.sv_name + service.host} {...service} />

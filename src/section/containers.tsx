@@ -16,6 +16,8 @@ function DockerContainer({
   running,
   host,
 }: DockerContainerStatus & { host: string }) {
+  const { data: status } = useStatus(host);
+
   return (
     <>
       <span className="overflow-hidden text-ellipsis">{name}</span>
@@ -36,7 +38,7 @@ function DockerContainer({
       <div className="text-xs overflow-hidden text-ellipsis text-nowrap">
         {image}
       </div>
-      <div className="text-xs">{host}</div>
+      <div className="text-xs">{status?.network.hostname}</div>
       <div className="text-xs text-right">{id}</div>
     </>
   );
@@ -71,7 +73,7 @@ export function DockerContainerList() {
               className="w-full"
             />
           </CardContent>
-          <CardContent className="grid gap-2 grid-cols-[200px_80px_3fr_1fr_1fr]">
+          <CardContent className="grid gap-2 grid-cols-[200px_90px_3fr_1fr_1fr] items-center">
             {containers
               .flatMap(({ data }, idx) =>
                 (data?.docker ?? []).map((container) => ({
@@ -80,13 +82,14 @@ export function DockerContainerList() {
                 }))
               )
               .sort((a, b) => Number(b.running) - Number(a.running))
-              .filter(
-                (container) =>
-                  container.name.toLowerCase().includes(search.toLowerCase()) ||
-                  container.image
-                    .toLowerCase()
-                    .includes(search.toLowerCase()) ||
-                  container.id.toLowerCase().includes(search.toLowerCase())
+              .filter((container) =>
+                [
+                  container.name.toLowerCase(),
+                  container.image.toLowerCase(),
+                  container.id.toLowerCase(),
+                ]
+                  .join("\0\0")
+                  .includes(search.toLowerCase())
               )
               .map((container) => (
                 <DockerContainer key={container.id} {...container} />
