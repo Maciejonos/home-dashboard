@@ -76,10 +76,11 @@ export function Hardware({ hostname }: HardwareProps) {
               CPU ({data.hardware.cpu_idle_percentages.all?.toFixed(1)}%)
             </div>
             <div className="grid gap-1 mb-4">
-              <Bar value={data.hardware.cpu_idle_percentages.core0} />
-              <Bar value={data.hardware.cpu_idle_percentages.core1} />
-              <Bar value={data.hardware.cpu_idle_percentages.core2} />
-              <Bar value={data.hardware.cpu_idle_percentages.core3} />
+              {Object.entries(data.hardware.cpu_idle_percentages)
+                .filter(([key]) => key !== "all")
+                .map(([key, value]) => (
+                  <Bar key={key} value={value as number} />
+                ))}
             </div>
 
             <div className="mb-4">
