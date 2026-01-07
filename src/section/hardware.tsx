@@ -26,7 +26,7 @@ function Bar({ className, value }: { className?: string; value: number }) {
     <div
       className={clsx(
         className,
-        "h-1 bg-primary rounded w-full transition-all min-w-[0.05rem]"
+        "h-1 bg-primary rounded w-full transition-all min-w-[0.05rem]",
       )}
       style={{ maxWidth: `${value}%` }}
     />
@@ -50,7 +50,7 @@ export function Hardware({ hostname }: HardwareProps) {
               color="destructive"
               onClick={() =>
                 deleteDevice(
-                  devices!.find(({ hostname: h }) => h === hostname)!.id
+                  devices!.find(({ hostname: h }) => h === hostname)!.id,
                 )
               }
             >
@@ -132,7 +132,7 @@ export function AddDevice() {
   });
   const { mutate: putDevice, isPending } = usePutDevice();
   const submit = (
-    e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
+    e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>,
   ) => {
     e.preventDefault();
     e.stopPropagation();
