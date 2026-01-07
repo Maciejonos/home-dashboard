@@ -28,47 +28,6 @@ def handle_validation_error(request: Request, exc: ValidationError):
     return {"error": "Invalid input", "details": exc.errors()}, 400
 
 
-# services = {
-#     "Minecraft": {
-#         "service": "minecraft",
-#     },
-#     "Updog": {"service": "updog", "url": "http://updog.lan"},
-#     "VPN": {"service": "openvpn@pl-waw.prod.surfshark.com_udp"},
-#     "Transmission": {"service": "transmission-daemon", "url": "http://torrent.lan"},
-# }
-# ssh_user = "anders"
-# ssh_server = "trufla.xyz"
-# ssh_tunnel_ports = [12842]
-
-
-# def check_tunnel(port):
-#     """Check if an SSH reverse tunnel is active on a given port."""
-#     try:
-#         result = subprocess.run(
-#             ["ps", "aux"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-#         )
-#         for line in result.stdout.splitlines():
-#             if "ssh" in line and f"R {port}:" in line:
-#                 return True
-#     except Exception:
-#         return False
-
-
-# def start_tunnel(port):
-#     subprocess.Popen(
-#         ["ssh", "-fN", "-R", f"{port}:localhost:{port}", f"{ssh_user}@{ssh_server}"]
-#     )
-
-
-# def stop_tunnel(port):
-#     result = subprocess.run(
-#         ["ps", "aux"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-#     )
-#     for line in result.stdout.splitlines():
-#         if "ssh" in line and f"R {port}:" in line:
-#             pid = line.split()[1]
-#             subprocess.run(["kill", pid])
-
 services = ServicePlugin(app)
 docker = DockerPlugin(app)
 todo_list = TodoListPlugin(app)
@@ -84,7 +43,6 @@ async def get_payload(request: Request):
         "docker": docker.get_containers(),
         "hardware": hardware_info(),
         "network": await network_info(),
-        # "ssh_tunnels": {port: check_tunnel(port) for port in ssh_tunnel_ports},
     }
     return payload
 
