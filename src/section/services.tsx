@@ -153,14 +153,12 @@ export function Services() {
     <Card className="mb-4">
       <CardHeader className="flex justify-between">
         <CardTitle>Services</CardTitle>
-        <Button
-          size="icon"
-          variant="outline"
-          onClick={() => setOpen(!open)}
-          className="relative left-2 bottom-2"
-        >
-          {open ? <ChevronUp /> : <ChevronDown />}
-        </Button>
+        <div className="relative left-2 bottom-2 flex gap-4">
+          <AddService />
+          <Button size="icon" variant="outline" onClick={() => setOpen(!open)}>
+            {open ? <ChevronUp /> : <ChevronDown />}
+          </Button>
+        </div>
       </CardHeader>
       {open && (
         <>
