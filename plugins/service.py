@@ -1,5 +1,6 @@
 import math
 from microdot import Microdot, Request
+from tinydb import TinyDB
 
 DBUS_AVAILABLE = False
 _bus = None
@@ -24,6 +25,12 @@ async def get_bus():
 	return _bus
 
 
+def get_pinned_services():
+	with TinyDB("data/db.json") as db:
+		pinned = db.table("pinned_services").all()
+		return {item["name"] for item in pinned}
+
+
 async def list_units(state: str = "all", search: str = "", page: int = 1, limit: int = 10):
 	bus = await get_bus()
 	if not bus:
@@ -37,6 +44,7 @@ async def list_units(state: str = "all", search: str = "", page: int = 1, limit:
 	except Exception:
 		return {"units": [], "total": 0, "page": 1, "pages": 0}
 
+	pinned = get_pinned_services()
 	units = []
 	for unit in raw_units:
 		name, description, _, active_state, sub_state, *_ = unit
@@ -51,9 +59,10 @@ async def list_units(state: str = "all", search: str = "", page: int = 1, limit:
 			"state": active_state,
 			"sub_state": sub_state,
 			"description": description,
+			"pinned": name in pinned,
 		})
 
-	units.sort(key=lambda u: (u["state"] != "active", u["state"] != "failed", u["name"]))
+	units.sort(key=lambda u: (not u["pinned"], u["state"] != "active", u["state"] != "failed", u["name"]))
 	total = len(units)
 	pages = math.ceil(total / limit) if limit > 0 else 1
 	start = (page - 1) * limit
@@ -71,6 +80,8 @@ class ServicePlugin:
 	def __init__(self, app: Microdot):
 		self.app = app
 		app.get("/api/services")(self.get_services)
+		app.put("/api/services/pin/<name>")(self.pin_service)
+		app.delete("/api/services/pin/<name>")(self.unpin_service)
 
 	async def get_services(self, request: Request):
 		state = request.args.get("state", "all")
@@ -78,3 +89,17 @@ class ServicePlugin:
 		page = int(request.args.get("page", 1))
 		limit = int(request.args.get("limit", 10))
 		return await list_units(state, search, page, limit)
+
+	def pin_service(self, request: Request, name: str):
+		with TinyDB("data/db.json") as db:
+			table = db.table("pinned_services")
+			existing = table.search(lambda x: x["name"] == name)
+			if not existing:
+				table.insert({"name": name})
+		return "", 204
+
+	def unpin_service(self, request: Request, name: str):
+		with TinyDB("data/db.json") as db:
+			table = db.table("pinned_services")
+			table.remove(lambda x: x["name"] == name)
+		return "", 204

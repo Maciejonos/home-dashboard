@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from "lucide-react";
-import { useSystemdUnits, SystemdUnit } from "../api/service";
+import { ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Pin } from "lucide-react";
+import { useSystemdUnits, SystemdUnit, usePinService } from "../api/service";
 
 const TABS = [
 	{ value: "all", label: "All" },
@@ -13,9 +13,25 @@ const TABS = [
 	{ value: "failed", label: "Failed" },
 ];
 
-function Unit({ name, state, sub_state, description }: SystemdUnit) {
+function Unit({
+	name,
+	state,
+	sub_state,
+	description,
+	pinned,
+	onPin,
+}: SystemdUnit & { onPin: () => void }) {
 	return (
 		<>
+			<Button
+				variant="ghost"
+				size="icon"
+				className="h-6 w-6"
+				onClick={onPin}
+				title={pinned ? "Unpin" : "Pin"}
+			>
+				<Pin className={`h-3 w-3 ${pinned ? "fill-current" : ""}`} />
+			</Button>
 			<span className="overflow-hidden text-ellipsis text-nowrap font-mono text-sm">
 				{name}
 			</span>
@@ -38,6 +54,7 @@ export function Services() {
 	const [search, setSearch] = React.useState("");
 	const [page, setPage] = React.useState(1);
 	const [debouncedSearch, setDebouncedSearch] = React.useState("");
+	const { mutate: pinService } = usePinService();
 
 	React.useEffect(() => {
 		const timeout = setTimeout(() => {
@@ -91,16 +108,23 @@ export function Services() {
 							className="w-48 ml-auto"
 						/>
 					</CardContent>
-					<CardContent className="grid gap-2 grid-cols-[1fr_80px_2fr] items-center">
+					<CardContent className="grid gap-2 grid-cols-[28px_1fr_80px_2fr] items-center">
+						<span />
 						<span className="text-xs text-muted-foreground font-medium">Unit</span>
 						<span className="text-xs text-muted-foreground font-medium text-center">State</span>
 						<span className="text-xs text-muted-foreground font-medium">Description</span>
 						{isLoading ? (
-							<span className="col-span-3 text-center text-muted-foreground py-4">Loading...</span>
+							<span className="col-span-4 text-center text-muted-foreground py-4">Loading...</span>
 						) : data?.units.length === 0 ? (
-							<span className="col-span-3 text-center text-muted-foreground py-4">No services found</span>
+							<span className="col-span-4 text-center text-muted-foreground py-4">No services found</span>
 						) : (
-							data?.units.map((unit) => <Unit key={unit.name} {...unit} />)
+							data?.units.map((unit) => (
+								<Unit
+									key={unit.name}
+									{...unit}
+									onPin={() => pinService({ name: unit.name, pinned: unit.pinned })}
+								/>
+							))
 						)}
 					</CardContent>
 					{data && data.pages > 1 && (

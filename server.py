@@ -40,7 +40,6 @@ monitored_devices = MonitoredDevicesPlugin(app)
 @app.get("/api/status")
 async def get_payload(request: Request):
     return {
-        "services": services.get_payload(),
         "docker": docker.get_containers(),
         "hardware": hardware_info(),
         "network": await network_info(),

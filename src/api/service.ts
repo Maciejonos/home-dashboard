@@ -1,12 +1,14 @@
-import { useQuery, useQueries } from "@tanstack/react-query";
+import { useQuery, useQueries, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDevices } from "./devices";
 import { API_HOST } from "./config.";
+import { callApi } from "./client";
 
 export type SystemdUnit = {
 	name: string;
 	state: string;
 	sub_state: string;
 	description: string;
+	pinned: boolean;
 };
 
 export type SystemdUnitsResponse = {
@@ -51,5 +53,19 @@ export function useAllSystemdUnits(params: SystemdQueryParams = {}) {
 		queries: [{ hostname: API_HOST }, ...(devices ?? [])].map(({ hostname }) =>
 			createServicesOptions(hostname, params),
 		),
+	});
+}
+
+export function usePinService() {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({ name, pinned }: { name: string; pinned: boolean }) =>
+			callApi(`services/pin/${encodeURIComponent(name)}`, {
+				method: pinned ? "DELETE" : "PUT",
+			}),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["services"] });
+		},
 	});
 }
