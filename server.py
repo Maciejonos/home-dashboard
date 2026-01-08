@@ -51,6 +51,11 @@ def index(request: Request):
     return send_file("public/index.html")
 
 
+@app.get("/favicon.ico")
+def favicon(request: Request):
+    return "", 204
+
+
 @app.get("/<path:path>")
 def public_files(request: Request, path: str):
     if ".." in path:
